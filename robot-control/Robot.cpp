@@ -1,7 +1,7 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Robot.h"
 #include <iostream>
-#include <Winsock2.h>
+#include <Winsock.h>
 #include <stdio.h>
 #include <ctime>
 #include <stdlib.h>
@@ -29,12 +29,32 @@ Robot::~Robot()
 	_getch();
 }
 
-int Robot::receiveMess()
+char* Robot::receiveMess(SOCKET s)
 {
-	return 0;
+	char sReceiveBuffer[1024] = { 0 };
+	// �������� � ������������ ������ �� �������
+	int nReaded = recv(s, sReceiveBuffer, sizeof(sReceiveBuffer) - 1, 0);
+	// � ������ ������ (��������, ������������ �������) �������
+	if (nReaded <= 0) return 0;
+	// �� �������� ����� ����, ������� ����� �������������� 
+	// �������� ����������� 0 ��� ASCII ������ 
+	sReceiveBuffer[nReaded] = 0;
+	// ����������� ������� �������� �����
+	for (char* pPtr = sReceiveBuffer; *pPtr != 0; pPtr++)
+	{
+		if (*pPtr == '\n' || *pPtr == '\r')
+		{
+			*pPtr = 0;
+			break;
+		}
+	}
+	cout << "-------------------------\n";
+	cout << "Receive:" << endl;
+	cout << sReceiveBuffer << "\n";
+	return sReceiveBuffer;
 }
 
-int Robot::sendMess(SOCKET s, int l_power, int r_power, int d_power, sockaddr_in serv_addr, int addrlen)
+int Robot::sendMess(SOCKET s, int l_power, int r_power, int d_power)
 {
 	if (l_power > 100) l_power = 100;
 	if (l_power < -100) l_power = -100;
@@ -42,8 +62,10 @@ int Robot::sendMess(SOCKET s, int l_power, int r_power, int d_power, sockaddr_in
 	if (r_power < -100) r_power = -100;
 	char control[1024] = { 0 };
 	sprintf_s(control, "0xFF 0xFF L%d R%d D%d 0xEE", l_power, r_power, d_power);
+	cout << "-------------------------\n";
+	cout << "Send:" << endl;
 	cout << control << "\n";
-	return sendto(s, control, strlen(control), 0, (sockaddr*)&serv_addr, addrlen);
+	return send(s, control, strlen(control), 0);
 }
 
 float Robot::regulator()

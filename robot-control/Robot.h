@@ -1,5 +1,5 @@
 #include <iostream>
-#include <Winsock2.h>
+#include <Winsock.h>
 #include <stdio.h>
 #include <ctime>
 #include <stdlib.h>
@@ -19,9 +19,9 @@ class Robot
 public:
 	Robot();
 	~Robot();
-	int receiveMess();
+	char* receiveMess(SOCKET s);
 	// отправка сообщения на сервер
-	int sendMess(SOCKET s, int l_power, int r_power, int d_power, sockaddr_in serv_addr, int addrlen);
+	int sendMess(SOCKET s, int l_power, int r_power, int d_power);
 	// регулирование движения робота
 	float regulator();
 
@@ -48,6 +48,8 @@ private:
 	float past_dist = 0;
 	// угол, на который повернулся робот за предыдущую итерацию
 	float past_ang = 0;
+	//
+	
 
 	// обновление данных о положении робота
 	void updatePos(float l_enc, float r_enc)
@@ -62,6 +64,8 @@ private:
 		x += past_dist * cos(abs_ang);
 		y += past_dist * sin(abs_ang);
 	}
+public:
+	bool bTerminate = false;
 
 };
 
