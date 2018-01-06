@@ -22,7 +22,6 @@ Robot::Robot()
 	std::cout << "Robot was created" << endl;
 }
 
-
 Robot::~Robot()
 {
 	std::cout << "Robot was destroyed" << endl;
