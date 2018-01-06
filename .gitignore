@@ -9,8 +9,8 @@
 *.xls
 *.vcxproj.filters
 *.txt
-Debug/*
-robot-control/Debug/*
-./vs/*
+Debug/
+robot-control/Debug/
+./vs/
 
 
