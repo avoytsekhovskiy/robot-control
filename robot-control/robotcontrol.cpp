@@ -20,12 +20,6 @@
 #define SERVICE_PORT 10007
 using namespace std;
 
-// ширина поля
-const float f_width = 300;
-// длина поля 
-const float f_lenght = 300;
-// 
-
 bool bTerminate = false;
 
 int main()
@@ -58,18 +52,26 @@ int main()
 	send(s, "Begin", strlen("Begin"), 0);
 	char sReceiveBuffer[1024] = { 0 };
 	robot.receiveMess(s);
-	//ofstream dots;
-	//dots.open("C:/users/Novel/Desktop/dots.txt");
+	ofstream dots;
+	dots.open("dots.txt");
+	float* coord;
 	while (!robot.bTerminate)
 	{
 		char sReceiveBuffer[1024] = { 0 };
 		_getch();
 		
 		robot.sendMess(s, 100, 100, 0);
-		
 		robot.receiveMess(s);
 		
+		coord = robot.showXY();
+
+		dots << coord[0] << " " << coord[1] << std::endl;
+		if (robot.dead == 1)
+		{
+			break;
+		};
 	}
+	dots.close();
 	_getch();
     return 0;
 }

@@ -9,23 +9,23 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
+#include "Robot.h"
 #pragma comment(lib, "ws2_32.lib")
 #define M_PI 3.1416
 #define _CRT_SECURE_NO_WARNINGS
 #define SERVICE_PORT 10007
-using namespace std;
 #pragma once
 
 
 Robot::Robot()
 {
-	cout << "Robot was created" << endl;
+	std::cout << "Robot was created" << endl;
 }
 
 
 Robot::~Robot()
 {
-	cout << "Robot was destroyed" << endl;
+	std::cout << "Robot was destroyed" << endl;
 	_getch();
 }
 
@@ -48,10 +48,14 @@ char* Robot::receiveMess(SOCKET s)
 			break;
 		}
 	}
-	cout << "-------------------------\n";
-	cout << "Receive:" << endl;
-	cout << sReceiveBuffer << "\n";
-	return sReceiveBuffer;
+	std::cout << "-------------------------\n";
+	std::cout << "Receive:" << std::endl;
+	std::cout << sReceiveBuffer << std::endl;
+	sscanf_s(sReceiveBuffer, "0xFF 0xFF L%f R%f S%d H%f M1%d M2%d M6%d 0xEE", &l_enc, &r_enc, &sens_target, &strength, &target_one, &target_two, &dead);
+	l_enc--;
+	std::cout << "left: " << l_enc << std::endl;
+	std::cout << "right: " << r_enc << std::endl;
+	updatePos(l_enc, r_enc);
 }
 
 int Robot::sendMess(SOCKET s, int l_power, int r_power, int d_power)
@@ -62,14 +66,23 @@ int Robot::sendMess(SOCKET s, int l_power, int r_power, int d_power)
 	if (r_power < -100) r_power = -100;
 	char control[1024] = { 0 };
 	sprintf_s(control, "0xFF 0xFF L%d R%d D%d 0xEE", l_power, r_power, d_power);
-	cout << "-------------------------\n";
-	cout << "Send:" << endl;
-	cout << control << "\n";
+	std::cout << "-------------------------\n";
+	std::cout << "Send:" << std::endl;
+	std::cout << control << std::endl;
 	return send(s, control, strlen(control), 0);
 }
 
 float Robot::regulator()
 {
+
 	return 0;
+}
+
+float* Robot::showXY()
+{
+	float coord[2];
+	coord[0] = x;
+	coord[1] = y;
+	return coord;
 }
 
