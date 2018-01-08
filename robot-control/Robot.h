@@ -39,6 +39,10 @@ private:
 	float l_enc = 0;
 	// положение правого энкодера
 	float r_enc = 0;
+	// положение левого энкодера за прошлые итерации
+	float past_l_enc = 0;
+	// положение правого энкодера за прошлые итерации
+	float past_r_enc = 0;
 	// запас прочности робота
 	float strength = 100;
 	// флаг нахождения цели
@@ -53,10 +57,12 @@ private:
 	float ki = 0.02;
 	// координаты робота: x - вверх, y - вправо
 	float x = 0, y = 0;
+	//
+	float past_dist = 0;
 	// абсолютный угол поворота робота
 	float abs_ang = 0;
 	// расстояние, пройденное за предыдущую итерацию
-	float past_dist = 0;
+	float rad_dist = 0;
 	// угол, на который повернулся робот за предыдущую итерацию
 	float past_ang = 0;
 	// ширина поля
@@ -66,21 +72,42 @@ private:
 	
 
 	// обновление данных о положении робота
-	void updatePos(float l_enc, float r_enc)
+	void updatePos()
 	{
 		// вычисление расстояний, пройденных левым и правым колесами
-		float l_dist, r_dist;
-		l_dist = (l_enc / 360) * 2 * M_PI * wheel_rad;
-		r_dist = (r_enc / 360) * 2 * M_PI * wheel_rad;
+		float l_dist, r_dist, dist;
+		l_dist = ((l_enc - past_l_enc) / 360) * 2 * M_PI * wheel_rad;
+		r_dist = ((r_enc - past_r_enc) / 360) * 2 * M_PI * wheel_rad;
+		//l_delta = l_dist - past_l_dist;
+		//r_delta = r_dist - past_r_dist;
 		// вычисление пройденного расстояния
-		past_dist = (l_dist + r_dist) / 2;
+		rad_dist = (l_dist + r_dist) / 2;
 		// вычисления поворота на текущей итерации
-		past_ang = (l_dist - r_dist) / wheel_width;
+		past_ang = (r_dist - l_dist) / wheel_width;
+	
+		dist = rad_dist;
+		
+		if (past_ang != 0)
+		{
+			dist = 2 * (rad_dist / past_ang) * sin(past_ang / 2);
+		}
 		// вычисление абсолютного угла поворота робота
 		abs_ang += past_ang;
+		if (abs_ang >= 2 * M_PI)
+		{
+			abs_ang -= 2 * M_PI;
+		}
+		if (abs_ang <= 2 * M_PI)
+		{
+			abs_ang += 2 * M_PI;
+		}
 		// вычисление текущих координат робота
-		x += past_dist * cos(abs_ang);
-		y += past_dist * sin(abs_ang);
+		x += dist * cos(abs_ang);
+		y += dist * sin(abs_ang);
+		std::cout << "Current X: " << x << std::endl;
+		std::cout << "Current Y: " << y << std::endl;
+		past_l_enc = l_enc;
+		past_r_enc = r_enc;
 	}
 };
 

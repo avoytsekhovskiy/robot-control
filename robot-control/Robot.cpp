@@ -51,10 +51,13 @@ char* Robot::receiveMess(SOCKET s)
 	std::cout << "Receive:" << std::endl;
 	std::cout << sReceiveBuffer << std::endl;
 	sscanf_s(sReceiveBuffer, "0xFF 0xFF L%f R%f S%d H%f M1%d M2%d M6%d 0xEE", &l_enc, &r_enc, &sens_target, &strength, &target_one, &target_two, &dead);
-	l_enc--;
+	if (r_enc != 0)
+	{
+		l_enc--;
+	}
 	std::cout << "left: " << l_enc << std::endl;
 	std::cout << "right: " << r_enc << std::endl;
-	updatePos(l_enc, r_enc);
+	updatePos();
 }
 
 int Robot::sendMess(SOCKET s, int l_power, int r_power, int d_power)

@@ -60,7 +60,7 @@ int main()
 		char sReceiveBuffer[1024] = { 0 };
 		_getch();
 		
-		robot.sendMess(s, 100, 100, 0);
+		robot.sendMess(s, 45, 25, 0);
 		robot.receiveMess(s);
 		
 		coord = robot.showXY();
