@@ -14,6 +14,9 @@
 using namespace std;
 #pragma once
 
+// объявления типа матрицы
+typedef std::vector< std::vector< std::vector<int> > > matX;
+
 class Robot
 {
 public:
@@ -23,7 +26,9 @@ public:
 	// отправка сообщения на сервер
 	int sendMess(SOCKET s, int l_power, int r_power, int d_power);
 	// регулирование движения робота
-	float regulator();
+	float* regulator(float tar_x, float tar_y);
+
+	matX track();
 
 	float* showXY();
 	bool bTerminate = false;
@@ -52,7 +57,7 @@ private:
 	// флаг выполнения цели 2
 	int target_two = 0;
 	// П-коэффициент регулятора
-	float kp = 5;
+	float kp = 20;
 	// И-коэффициент регулятора
 	float ki = 0.02;
 	// координаты робота: x - вверх, y - вправо
@@ -66,10 +71,11 @@ private:
 	// угол, на который повернулся робот за предыдущую итерацию
 	float past_ang = 0;
 	// ширина поля
-	const float f_width = 300;
-	// длина поля 
-	const float f_lenght = 300;
-	
+	const int border = 150;	
+	// матрица с точками миссии
+	matX targets;
+	//индекс текущей точки миссии
+	int index[2] = { 0, 0 };
 
 	// обновление данных о положении робота
 	void updatePos()

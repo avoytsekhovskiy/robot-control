@@ -55,12 +55,13 @@ int main()
 	ofstream dots;
 	dots.open("dots.txt");
 	float* coord;
+	float* speed;
 	while (!robot.bTerminate)
 	{
 		char sReceiveBuffer[1024] = { 0 };
 		_getch();
-		
-		robot.sendMess(s, 45, 25, 0);
+		speed = robot.regulator(25, 35);
+		robot.sendMess(s, speed[1], speed[0], 0);
 		robot.receiveMess(s);
 		
 		coord = robot.showXY();

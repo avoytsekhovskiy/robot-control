@@ -74,10 +74,39 @@ int Robot::sendMess(SOCKET s, int l_power, int r_power, int d_power)
 	return send(s, control, strlen(control), 0);
 }
 
-float Robot::regulator()
+float* Robot::regulator(float tar_x, float tar_y)
 {
+	float delta_x, delta_y, tar_ang, err_ang;
+	float speed[2];
+	delta_x = tar_x - x;
+	delta_y = tar_y - y;
+	tar_ang = atan(tar_y / tar_x);
+	if ((tar_x < 0) && (tar_y > 0))
+	{
+		tar_ang += M_PI;
+	}
+	if ((tar_x < 0) && (tar_y < 0))
+	{
+		tar_ang -= M_PI;
+	}
+	err_ang = tar_ang - abs_ang;
+	speed[0] = round(50 - err_ang * kp);
+	speed[1] = round(50 + err_ang * kp);
 
-	return 0;
+	return speed;
+}
+
+matX Robot::track()
+{
+	for (int i; i <= 2 * (border - 10); i++)
+	{
+		for (int j = 0; j <= 2 * (border - 10); j++)
+		{
+			targets[i][j][0] = -border + 10 + i;
+			targets[i][j][1] = -border + 10 + j;
+		}
+	}
+	return targets;
 }
 
 float* Robot::showXY()
