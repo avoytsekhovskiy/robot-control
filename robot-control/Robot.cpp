@@ -78,36 +78,49 @@ float* Robot::regulator(float tar_x, float tar_y)
 {
 	float delta_x, delta_y, tar_ang, err_ang;
 	float speed[2];
+	int spd;
 	delta_x = tar_x - x;
 	delta_y = tar_y - y;
-	tar_ang = atan(tar_y / tar_x);
-	if ((tar_x < 0) && (tar_y > 0))
+	tar_ang = atan2(delta_y, delta_x);
+	if ((delta_x < 0) && (delta_y > 0))
 	{
 		tar_ang += M_PI;
 	}
-	if ((tar_x < 0) && (tar_y < 0))
+	if ((delta_x < 0) && (delta_y < 0))
 	{
 		tar_ang -= M_PI;
 	}
 	err_ang = tar_ang - abs_ang;
-	speed[0] = round(50 - err_ang * kp);
-	speed[1] = round(50 + err_ang * kp);
+	std::cout << "-------------------------" << std::endl;
+	std::cout << "Current angle error: " << err_ang << std::endl;
+	if (err_ang < 0.01)
+	{
+		spd = 70;
+	}
+	else
+	{
+		spd = 0;
+	}
+	speed[0] = round(spd - err_ang * kp);
+	speed[1] = round(spd + err_ang * kp);
 
 	return speed;
 }
 
-matX Robot::track()
+void Robot::track()
 {
-	for (int i; i <= 2 * (border - 10); i++)
+	for (int i = 0; i <= 2 * (border - 10); i++)
 	{
 		for (int j = 0; j <= 2 * (border - 10); j++)
 		{
-			targets[i][j][0] = -border + 10 + i;
-			targets[i][j][1] = -border + 10 + j;
+			//targets[idx][0] = -border + 10 + i;
+			//targets[idx][1] = -border + 10 + j;
+			idx++;
 		}
 	}
-	return targets;
+	//std::cout << "RANDOM X COORDINATE: " << targets[100][0] << std::endl;
 }
+
 
 float* Robot::showXY()
 {

@@ -28,12 +28,18 @@ public:
 	// регулирование движения робота
 	float* regulator(float tar_x, float tar_y);
 
-	matX track();
+	void track();
 
 	float* showXY();
 	bool bTerminate = false;
 	// флаг уничтожения робота
 	int dead = 0;
+	//индекс текущей точки миссии
+	int idx = 0;
+	// матрица с точками миссии
+	matX targets;
+	// ширина поля
+	const int border = 150;
 
 private:
 	// радиус колеса 4 cm
@@ -57,7 +63,7 @@ private:
 	// флаг выполнения цели 2
 	int target_two = 0;
 	// П-коэффициент регулятора
-	float kp = 20;
+	float kp = 100;
 	// И-коэффициент регулятора
 	float ki = 0.02;
 	// координаты робота: x - вверх, y - вправо
@@ -70,12 +76,9 @@ private:
 	float rad_dist = 0;
 	// угол, на который повернулся робот за предыдущую итерацию
 	float past_ang = 0;
-	// ширина поля
-	const int border = 150;	
-	// матрица с точками миссии
-	matX targets;
-	//индекс текущей точки миссии
-	int index[2] = { 0, 0 };
+		
+	
+	
 
 	// обновление данных о положении робота
 	void updatePos()
@@ -103,7 +106,7 @@ private:
 		{
 			abs_ang -= 2 * M_PI;
 		}
-		if (abs_ang <= 2 * M_PI)
+		if (abs_ang <= -2 * M_PI)
 		{
 			abs_ang += 2 * M_PI;
 		}
@@ -112,6 +115,7 @@ private:
 		y += dist * sin(abs_ang);
 		std::cout << "Current X: " << x << std::endl;
 		std::cout << "Current Y: " << y << std::endl;
+		std::cout << "Current absolute angle: " << abs_ang << std::endl;
 		past_l_enc = l_enc;
 		past_r_enc = r_enc;
 	}

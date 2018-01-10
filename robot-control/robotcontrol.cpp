@@ -21,10 +21,14 @@
 using namespace std;
 
 bool bTerminate = false;
+// объявления типа матрицы
+//typedef std::vector< std::vector< std::vector<int> > > matX;
+
 
 int main()
 {
 	Robot robot;
+	robot.track();
 	SOCKET s;
 	sockaddr_in serv_addr;
 	WSADATA wsadata;
@@ -56,14 +60,17 @@ int main()
 	dots.open("dots.txt");
 	float* coord;
 	float* speed;
+	int X, Y;
 	while (!robot.bTerminate)
 	{
 		char sReceiveBuffer[1024] = { 0 };
 		_getch();
-		speed = robot.regulator(25, 35);
-		robot.sendMess(s, speed[1], speed[0], 0);
+		//X = robot.targets[robot.index_i][robot.index_j][0];
+		//Y = robot.targets[robot.index_i][robot.index_j][1];
+		speed = robot.regulator(50, -150);
+		robot.sendMess(s, speed[0], speed[1], 0);
 		robot.receiveMess(s);
-		
+
 		coord = robot.showXY();
 
 		dots << coord[0] << " " << coord[1] << std::endl;
@@ -71,8 +78,25 @@ int main()
 		{
 			break;
 		};
+		/*
+		if (sqrt(pow(X - coord[0], 2) + pow(Y - coord[1], 2)) < 5)
+		{
+			robot.index_j++;
+			if (robot.index_j > 2 * (robot.border - 10))
+			{
+				robot.index_i++;
+				robot.index_j = 0;
+			}
+			if (robot.index_i > 2 * (robot.border - 10))
+			{
+				std::cout << "Drilling site not found!" << std::endl;
+				_getch();
+				break;
+			}
+		}
+		*/
 	}
 	dots.close();
 	_getch();
-    return 0;
+	return 0;
 }
