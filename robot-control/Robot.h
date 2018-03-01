@@ -15,7 +15,7 @@ using namespace std;
 #pragma once
 
 // объявления типа матрицы
-typedef std::vector< std::vector< std::vector<int> > > matX;
+typedef std::vector<float> matlist;
 
 class Robot
 {
@@ -37,7 +37,9 @@ public:
 	//индекс текущей точки миссии
 	int idx = 0;
 	// матрица с точками миссии
-	matX targets;
+	matlist targets;
+	// координаты робота: x - вверх, y - вправо
+	float x = 0, y = 0;
 	// ширина поля
 	const int border = 150;
 
@@ -63,11 +65,10 @@ private:
 	// флаг выполнения цели 2
 	int target_two = 0;
 	// П-коэффициент регулятора
-	float kp = 100;
+	float kp = 70;
 	// И-коэффициент регулятора
 	float ki = 0.02;
-	// координаты робота: x - вверх, y - вправо
-	float x = 0, y = 0;
+	
 	//
 	float past_dist = 0;
 	// абсолютный угол поворота робота

@@ -1,6 +1,6 @@
+import re
 import numpy as np
 import matplotlib.pyplot as plt
-import re
 
 
 my_drill_site = [0, 0]
@@ -25,7 +25,9 @@ with open("dots.txt") as txt:
         else:
             my_points.append(pair)
         index += 1
-with open("log/data1.csv") as txt:
+
+
+with open("../log/data1.csv") as txt:
     for line in txt:
         pair = line.split(";")
         pair = [float(numb) for numb in pair]
@@ -53,11 +55,13 @@ if stage == 1:
     points_true = np.array(points_true)
     my_points = np.array(my_points)
     plt.figure(1)
-    plt.subplot(211)
+    plt.subplot(121)
     plt.plot(points_true[:, 0], points_true[:, 1], color='green')
-    plt.subplot(212)
+    plt.subplot(122)
     plt.plot(my_points[:, 0], -my_points[:, 1], color='red')
     plt.show()
+    
+
 else:
     points_true = np.array(points_true)
     my_points = np.array(my_points)

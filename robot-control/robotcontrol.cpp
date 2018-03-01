@@ -64,10 +64,15 @@ int main()
 	while (!robot.bTerminate)
 	{
 		char sReceiveBuffer[1024] = { 0 };
-		_getch();
-		//X = robot.targets[robot.index_i][robot.index_j][0];
-		//Y = robot.targets[robot.index_i][robot.index_j][1];
-		speed = robot.regulator(50, -150);
+		//_getch();
+		X = robot.targets[robot.idx + 1];
+		Y = robot.targets[robot.idx];
+		std::cout << "-------------------------" << std::endl;
+		std::cout << "TARGET X: " << X << std::endl;
+		std::cout << "TARGET Y: " << Y << std::endl;
+		std::cout << "IDX: " << robot.idx / 2 << std::endl;
+
+		speed = robot.regulator(X, Y);
 		robot.sendMess(s, speed[0], speed[1], 0);
 		robot.receiveMess(s);
 
@@ -78,23 +83,19 @@ int main()
 		{
 			break;
 		};
-		/*
-		if (sqrt(pow(X - coord[0], 2) + pow(Y - coord[1], 2)) < 5)
+		float pif = sqrt(pow(robot.targets[robot.idx + 1] - robot.x, 2) + pow(robot.targets[robot.idx] - robot.y, 2));
+		std::cout << "PIF: " << pif << std::endl;
+		if (robot.idx < robot.targets.size())
 		{
-			robot.index_j++;
-			if (robot.index_j > 2 * (robot.border - 10))
+			if (sqrt(pow(robot.targets[robot.idx + 1] - robot.x, 2) + pow(robot.targets[robot.idx] - robot.y, 2)) < 5)
 			{
-				robot.index_i++;
-				robot.index_j = 0;
-			}
-			if (robot.index_i > 2 * (robot.border - 10))
-			{
-				std::cout << "Drilling site not found!" << std::endl;
-				_getch();
-				break;
+				robot.idx += 2;
 			}
 		}
-		*/
+		else {
+			std::cout << "That's all" << std::endl;
+			break;
+		}
 	}
 	dots.close();
 	_getch();

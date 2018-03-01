@@ -55,6 +55,11 @@ char* Robot::receiveMess(SOCKET s)
 	{
 		l_enc--;
 	}
+	if (target_one > 0)
+	{
+		_getch();
+		std::cout << "I found point!" << std::endl;
+	}
 	std::cout << "left: " << l_enc << std::endl;
 	std::cout << "right: " << r_enc << std::endl;
 	updatePos();
@@ -84,16 +89,17 @@ float* Robot::regulator(float tar_x, float tar_y)
 	tar_ang = atan2(delta_y, delta_x);
 	if ((delta_x < 0) && (delta_y > 0))
 	{
-		tar_ang += M_PI;
+		//tar_ang += M_PI;
 	}
-	if ((delta_x < 0) && (delta_y < 0))
+	if ((delta_x < 0) && (delta_y < 0) && (abs_ang >= 0))
 	{
-		tar_ang -= M_PI;
+		//tar_ang -= M_PI;
 	}
+
 	err_ang = tar_ang - abs_ang;
 	std::cout << "-------------------------" << std::endl;
 	std::cout << "Current angle error: " << err_ang << std::endl;
-	if (err_ang < 0.01)
+	if (abs(err_ang) < 0.1)
 	{
 		spd = 70;
 	}
@@ -109,16 +115,27 @@ float* Robot::regulator(float tar_x, float tar_y)
 
 void Robot::track()
 {
-	for (int i = 0; i <= 2 * (border - 10); i++)
+	int flag = 0;
+	for (int i = border - 10; i >= -border + 10; i -= 5)
 	{
-		for (int j = 0; j <= 2 * (border - 10); j++)
+		if (flag % 2)
 		{
-			//targets[idx][0] = -border + 10 + i;
-			//targets[idx][1] = -border + 10 + j;
-			idx++;
+			for (int j = -border + 10; j <= border - 10; j += 70)
+			{
+				targets.push_back(-j);
+				targets.push_back(-i);
+			}
 		}
+		else
+		{
+			for (int j = border - 10; j >= -border + 10; j -= 70)
+			{
+				targets.push_back(-j);
+				targets.push_back(-i);
+			}
+		}
+		flag++;
 	}
-	//std::cout << "RANDOM X COORDINATE: " << targets[100][0] << std::endl;
 }
 
 
