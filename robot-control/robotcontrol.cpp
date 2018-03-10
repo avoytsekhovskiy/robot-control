@@ -63,13 +63,18 @@ int main()
 		std::cout << "TARGET X: " << X << std::endl;
 		std::cout << "TARGET Y: " << Y << std::endl;
 		std::cout << "IDX: " << robot.idx / 2 << std::endl;
-
 		speed = robot.regulator(X, Y);
 		robot.sendMess(s, speed[0], speed[1], 0);
 		robot.receiveMess(s);
 		if (robot.sens_target > 0) {
 			std::cout << "I found point!" << std::endl;
 			std::cout << "It's true! Stop!!!" << std::endl;
+			robot.sendMess(s, 0, 0, 20);
+			robot.receiveMess(s);
+			std::cout << robot.target_one << std::endl;
+			if (robot.target_one > 0) {
+				std::cout << "Target 1 was completed" << std::endl;
+			}
 			_getch();
 		} else { 
 			coord = robot.showXY();
