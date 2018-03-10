@@ -13,12 +13,16 @@
 #define SERVICE_PORT 10007 
 using namespace std;
 #pragma once
+#pragma comment(lib, "ws2_32.lib")
+#define M_PI 3.1416
+#define _CRT_SECURE_NO_WARNINGS
+#define SERVICE_PORT 10007 
+#pragma once
 
 // объявления типа матрицы
 typedef std::vector<float> matlist;
 
-class Robot
-{
+class Robot {
 public:
 	Robot();
 	~Robot();
@@ -27,9 +31,7 @@ public:
 	int sendMess(SOCKET s, int l_power, int r_power, int d_power);
 	// регулирование движения робота
 	float* regulator(float tar_x, float tar_y);
-
 	void track();
-
 	float* showXY();
 	bool bTerminate = false;
 	// флаг уничтожения робота
@@ -42,8 +44,6 @@ public:
 	float x = 0, y = 0;
 	// ширина поля
 	const int border = 150;
-
-private:
 	// радиус колеса 4 cm
 	const int wheel_rad = 4;
 	// ширина колесной базы 15 cm
@@ -78,9 +78,6 @@ private:
 	// угол, на который повернулся робот за предыдущую итерацию
 	float past_ang = 0;
 		
-	
-	
-
 	// обновление данных о положении робота
 	void updatePos()
 	{
@@ -94,23 +91,12 @@ private:
 		rad_dist = (l_dist + r_dist) / 2;
 		// вычисления поворота на текущей итерации
 		past_ang = (r_dist - l_dist) / wheel_width;
-	
 		dist = rad_dist;
-		
-		if (past_ang != 0)
-		{
-			dist = 2 * (rad_dist / past_ang) * sin(past_ang / 2);
-		}
+		if (past_ang != 0) dist = 2 * (rad_dist / past_ang) * sin(past_ang / 2);
 		// вычисление абсолютного угла поворота робота
 		abs_ang += past_ang;
-		if (abs_ang >= 2 * M_PI)
-		{
-			abs_ang -= 2 * M_PI;
-		}
-		if (abs_ang <= -2 * M_PI)
-		{
-			abs_ang += 2 * M_PI;
-		}
+		if (abs_ang >= 2 * M_PI) abs_ang -= 2 * M_PI;
+		if (abs_ang <= -2 * M_PI) abs_ang += 2 * M_PI;
 		// вычисление текущих координат робота
 		x += dist * cos(abs_ang);
 		y += dist * sin(abs_ang);

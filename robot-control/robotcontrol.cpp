@@ -1,7 +1,3 @@
-// robotcontrol.cpp: определяет точку входа для консольного приложения.
-//
-
-
 #include "stdafx.h"
 #include <iostream>
 #include <Winsock.h>
@@ -24,7 +20,6 @@ bool bTerminate = false;
 // объявления типа матрицы
 //typedef std::vector< std::vector< std::vector<int> > > matX;
 
-
 int main()
 {
 	Robot robot;
@@ -37,8 +32,7 @@ int main()
 	// ��������� ����� ������� ������
 	gethostname(sName, sizeof(sName));
 	printf("\nClient host: %s\n", sName);
-	if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
-	{
+	if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
 		fprintf(stderr, "Can't create socket\n");
 		exit(1);
 	}
@@ -49,8 +43,7 @@ int main()
 	// �������������� ������� ����
 	serv_addr.sin_port = htons((u_short)SERVICE_PORT);
 	// �����������
-	while (connect(s, (sockaddr*)&serv_addr, sizeof(serv_addr)) == INVALID_SOCKET)
-	{
+	while (connect(s, (sockaddr*)&serv_addr, sizeof(serv_addr)) == INVALID_SOCKET) {
 		fprintf(stderr, "Can't connect\n");
 	}
 	send(s, "Begin", strlen("Begin"), 0);
@@ -61,8 +54,7 @@ int main()
 	float* coord;
 	float* speed;
 	int X, Y;
-	while (!robot.bTerminate)
-	{
+	while (!robot.bTerminate) {
 		char sReceiveBuffer[1024] = { 0 };
 		//_getch();
 		X = robot.targets[robot.idx + 1];
@@ -75,26 +67,22 @@ int main()
 		speed = robot.regulator(X, Y);
 		robot.sendMess(s, speed[0], speed[1], 0);
 		robot.receiveMess(s);
-
-		coord = robot.showXY();
-
-		dots << coord[0] << " " << coord[1] << std::endl;
-		if (robot.dead == 1)
-		{
-			break;
-		};
-		float pif = sqrt(pow(robot.targets[robot.idx + 1] - robot.x, 2) + pow(robot.targets[robot.idx] - robot.y, 2));
-		std::cout << "PIF: " << pif << std::endl;
-		if (robot.idx < robot.targets.size())
-		{
-			if (sqrt(pow(robot.targets[robot.idx + 1] - robot.x, 2) + pow(robot.targets[robot.idx] - robot.y, 2)) < 5)
-			{
-				robot.idx += 2;
+		if (robot.sens_target > 0) {
+			std::cout << "I found point!" << std::endl;
+			std::cout << "It's true! Stop!!!" << std::endl;
+			_getch();
+		} else { 
+			coord = robot.showXY();
+			dots << coord[0] << " " << coord[1] << std::endl;
+			if (robot.dead == 1) break;
+			float pif = sqrt(pow(robot.targets[robot.idx + 1] - robot.x, 2) + pow(robot.targets[robot.idx] - robot.y, 2));
+			std::cout << "PIF: " << pif << std::endl;
+			if (robot.idx < robot.targets.size()) {
+				if (sqrt(pow(robot.targets[robot.idx + 1] - robot.x, 2) + pow(robot.targets[robot.idx] - robot.y, 2)) < 2) robot.idx += 2;
+			} else {
+				std::cout << "That's all" << std::endl;
+				break;
 			}
-		}
-		else {
-			std::cout << "That's all" << std::endl;
-			break;
 		}
 	}
 	dots.close();

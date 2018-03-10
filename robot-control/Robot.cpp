@@ -15,6 +15,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define SERVICE_PORT 10007
 #pragma once
+using namespace std;
 
 
 Robot::Robot()
@@ -39,10 +40,8 @@ char* Robot::receiveMess(SOCKET s)
 	// �������� ����������� 0 ��� ASCII ������ 
 	sReceiveBuffer[nReaded] = 0;
 	// ����������� ������� �������� �����
-	for (char* pPtr = sReceiveBuffer; *pPtr != 0; pPtr++)
-	{
-		if (*pPtr == '\n' || *pPtr == '\r')
-		{
+	for (char* pPtr = sReceiveBuffer; *pPtr != 0; pPtr++) {
+		if (*pPtr == '\n' || *pPtr == '\r') {
 			*pPtr = 0;
 			break;
 		}
@@ -51,15 +50,7 @@ char* Robot::receiveMess(SOCKET s)
 	std::cout << "Receive:" << std::endl;
 	std::cout << sReceiveBuffer << std::endl;
 	sscanf_s(sReceiveBuffer, "0xFF 0xFF L%f R%f S%d H%f M1%d M2%d M6%d 0xEE", &l_enc, &r_enc, &sens_target, &strength, &target_one, &target_two, &dead);
-	if (r_enc != 0)
-	{
-		l_enc--;
-	}
-	if (target_one > 0)
-	{
-		_getch();
-		std::cout << "I found point!" << std::endl;
-	}
+	if (r_enc != 0) l_enc--;
 	std::cout << "left: " << l_enc << std::endl;
 	std::cout << "right: " << r_enc << std::endl;
 	updatePos();
@@ -87,49 +78,30 @@ float* Robot::regulator(float tar_x, float tar_y)
 	delta_x = tar_x - x;
 	delta_y = tar_y - y;
 	tar_ang = atan2(delta_y, delta_x);
-	if ((delta_x < 0) && (delta_y > 0))
-	{
-		//tar_ang += M_PI;
-	}
-	if ((delta_x < 0) && (delta_y < 0) && (abs_ang >= 0))
-	{
-		//tar_ang -= M_PI;
-	}
-
 	err_ang = tar_ang - abs_ang;
 	std::cout << "-------------------------" << std::endl;
 	std::cout << "Current angle error: " << err_ang << std::endl;
-	if (abs(err_ang) < 0.1)
-	{
+	if (abs(err_ang) < 0.1) {
 		spd = 70;
-	}
-	else
-	{
+	} else {
 		spd = 0;
 	}
 	speed[0] = round(spd - err_ang * kp);
 	speed[1] = round(spd + err_ang * kp);
-
 	return speed;
 }
 
 void Robot::track()
 {
 	int flag = 0;
-	for (int i = border - 10; i >= -border + 10; i -= 5)
-	{
-		if (flag % 2)
-		{
-			for (int j = -border + 10; j <= border - 10; j += 70)
-			{
+	for (int i = border - 10; i >= -border + 10; i -= 5) {
+		if (flag % 2) {
+			for (int j = -border + 10; j <= border - 10; j += 20) {
 				targets.push_back(-j);
 				targets.push_back(-i);
 			}
-		}
-		else
-		{
-			for (int j = border - 10; j >= -border + 10; j -= 70)
-			{
+		} else {
+			for (int j = border - 10; j >= -border + 10; j -= 20) {
 				targets.push_back(-j);
 				targets.push_back(-i);
 			}
