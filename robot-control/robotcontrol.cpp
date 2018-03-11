@@ -54,7 +54,7 @@ int main()
 	float* coord;
 	float* speed;
 	int X, Y;
-	bool debug = true;
+	bool debug = false;
 	while (!robot.bTerminate) {
 		char sReceiveBuffer[1024] = { 0 };
 		//_getch();
@@ -85,9 +85,7 @@ int main()
 		} else if (robot.target_two > 0) {
 			std::cout << "cake is a lie" << std::endl;
 			_getch();
-			robot.receiveMess(s);
-			_getch();
-			break;
+			return 0;
 		} else {
 			speed = robot.regulator(X, Y);
 			robot.sendMess(s, speed[0], speed[1], 0);
