@@ -32,10 +32,22 @@ int main()
 	// ��������� ����� ������� ������
 	gethostname(sName, sizeof(sName));
 	printf("\nClient host: %s\n", sName);
-	if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
-		fprintf(stderr, "Can't create socket\n");
-		exit(1);
+	int tcp_or_udp = 1;
+	std::cout << "Enter 0 for UDP or 1 for TCP" << std::endl;
+	std::cin >> tcp_or_udp;
+	if (tcp_or_udp > 0) {
+		if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
+			fprintf(stderr, "Can't create socket\n");
+			exit(1);
+		}
 	}
+	else {
+		if ((s = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET) {
+			fprintf(stderr, "Can't create socket\n");
+			exit(1);
+		}
+	}
+	
 	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	// ��������� ������ �� ���� ��������� ������� �����������, � ��������� localhost
