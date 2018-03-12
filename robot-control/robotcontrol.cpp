@@ -96,6 +96,9 @@ int main()
 			_getch();
 		} else if (robot.target_two > 0) {
 			std::cout << "cake is a lie" << std::endl;
+			closesocket(s);
+			WSACleanup();
+			dots.close();
 			_getch();
 			return 0;
 		} else {
@@ -115,6 +118,8 @@ int main()
 			}
 		}
 	}
+	closesocket(s);
+	WSACleanup();
 	dots.close();
 	_getch();
 	return 0;
